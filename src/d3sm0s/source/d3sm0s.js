@@ -1,18 +1,3 @@
-// https://stackoverflow.com/questions/3115982/how-to-check-if-two-arrays-are-equal-with-javascript
-function arraysEqual(a, b) {
-  if (a === b) return true;
-  if (a == null || b == null) return false;
-  if (a.length != b.length) return false;
-
-  // If you don't care about the order of the elements inside
-  // the array, you should sort both arrays here.
-
-  for (var i = 0; i < a.length; ++i) {
-    if (a[i] !== b[i]) return false;
-  }
-  return true;
-}
-
 class d3sm0s {
   constructor() {
     this.mathbox = this.initializeMathBox();
@@ -60,18 +45,29 @@ class d3sm0s {
     // view
     // .axis({
     //   axis: 1,
+    //   range: [0,0.1],
+    //   color: 'red'
     // })
     // .axis({
     //   axis: 2,
+    //   range: [0,0.1],
+    //   color: 'green'
     // })
     // .axis({
     //   axis: 3,
+    //   range: [0,0.1],
+    //   color: 'blue'
     // });
 
     view
+    .cartesian({
+      range: [[-δ, δ], [-δ, δ], [-δ, δ]],
+      scale: [1, 1, 1],
+      rotation: [-π/2, 0, -π/2]
+    })
     .grid({
-      divideX: 30,
-      divideY: 30,
+      divideX: 5,
+      divideY: 5,
       niceX: false,
       niceY: false,
       width: 0.25,
@@ -127,24 +123,13 @@ class mathObject {
     return view.cartesian({
       range: [[-δ, δ], [-δ, δ], [-δ, δ]],
       scale: [1, 1, 1],
+      rotation: [-π/2, 0, -π/2]
     })
   }
-  createPlaceholderData(domain){
-    return domain.interval({
-        // id: "sampler",
-        width: 1,
-        live: false,
-        expr: function(emit, x, i, t, d){
-          emit(x, NaN);
-        },
-        items: 1,
-        channels: 2
-      })
-  };
   createData(){
     return this.domain.interval({
         // id: "sampler",
-        width: 256,
+        width: 1,
         live: false,
         expr: function(emit, x, i, t, d){
           emit(x, NaN);
@@ -181,8 +166,8 @@ class mathObject {
   createSurfData(){
     this.attachedGraph = true;
     return this.domain.area({
-      width: 256,
-      height: 256,
+      width: 128,
+      height: 128,
       live: false,
       expr: function(emit, x, y ,i, j, t, d){
         emit(x, y, NaN);
@@ -192,7 +177,21 @@ class mathObject {
     })
   }
   createSurfPrimitive(){
-    return this.data.surface({
+    return this.data
+    .shader({
+      code: "#vertex-xyz",
+    })
+    .vertex({
+      pass: 'data'
+    })
+    .shader({
+      code: "#fragment-xyz",
+      scale: 0.6
+    })
+    .fragment({
+      gamma: true
+    })
+    .surface({
         color: this.color,
         shaded: true,
       });
