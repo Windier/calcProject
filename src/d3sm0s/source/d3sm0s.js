@@ -14,7 +14,7 @@ class d3sm0s {
     });
     var three = mathbox.three;
 
-    three.camera.position.set(0, 0, 2);
+    three.camera.position.set(1, 1, 2);
     three.renderer.setClearColor(new THREE.Color(0xFFFFFF), 1.0);
 
     return mathbox;
@@ -66,11 +66,11 @@ class d3sm0s {
       rotation: [-π/2, 0, -π/2]
     })
     .grid({
-      divideX: 5,
-      divideY: 5,
+      divideX: 10,
+      divideY: 10,
       niceX: false,
       niceY: false,
-      width: 0.25,
+      width: 0.5,
       opacity: 0.45,
       zBias: -90,
     });
