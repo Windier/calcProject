@@ -72,7 +72,7 @@ class d3sm0s {
       niceY: false,
       width: 0.5,
       opacity: 0.45,
-      zBias: -90,
+//      zBias: -90,
     });
 
     return view;
