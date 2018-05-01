@@ -186,7 +186,7 @@ class mathObject {
     })
     .shader({
       code: "#fragment-xyz",
-      scale: 0.6
+      scale: 0.25
     })
     .fragment({
       gamma: true
