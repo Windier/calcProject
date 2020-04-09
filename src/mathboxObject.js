@@ -11,6 +11,7 @@ export default class mathObject {
 
   createDomain(view) {
     var L = 10;
+    const pi = 3.14159;
     return view.cartesian({
       id: this.id + "domain",
       range: [
@@ -18,8 +19,8 @@ export default class mathObject {
         [-L, L],
         [-L, L]
       ],
-      scale: [1, 1, 1]
-      //rotation: [-π/2, 0, -π/2]
+      scale: [1, 1, 1],
+      rotation: [-pi/2, 0, -pi/2]
     });
   }
 

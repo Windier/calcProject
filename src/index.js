@@ -4,8 +4,8 @@ import mathObject from "./mathboxObject";
 
 import AddEquation from "./components/AddEquation";
 import { MathObjects } from "./components/MathObjects";
-import { latexParser } from "./parser";
-import { exprParser } from "./parser2"
+// import { latexParser } from "./parser";
+import { latexParser } from "./parser2"
 
 // Material UI Components
 import { makeStyles } from "@material-ui/core/styles";
@@ -20,7 +20,6 @@ export class App extends React.Component {
     this.mathbox = window.mathbox;
     this.state = {
       mathObjects: []
-      // [{ id: "IDCPE", expression: "\\sin(x)", active: false }]
     };
   }
 
@@ -55,8 +54,7 @@ export class App extends React.Component {
   };
 
   parseExpression = (expr, id, index) => {
-    const [validFunction, func, variables] = exprParser(expr);
-    //console.log(latex, id, validFunction, variables);
+    const [validFunction, func, variables] = latexParser(expr);
 
     const isGraphAttached = this.state.mathObjects[index].active;
 

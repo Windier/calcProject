@@ -4,16 +4,16 @@ import EditableMathField, { addStyles as addMathquillStyles } from "react-mathqu
 addMathquillStyles();
 
 const config = {
-  // spaceBehavesLikeTab: true,
-  // leftRightIntoCmdGoes: 'up',
-  // restrictMismatchedBrackets: false,
-  // sumStartsWithNEquals: true,
-  // supSubsRequireOperand: true,
-  // charsThatBreakOutOfSupSub: '+-=<>',
-  // autoSubscriptNumerals: true,
-  // autoCommands: 'pi theta sqrt sum',
-  // autoOperatorNames: 'sin cos',
-  // maxDepth: 10,
+  spaceBehavesLikeTab: true,
+  leftRightIntoCmdGoes: 'up',
+  restrictMismatchedBrackets: false,
+  sumStartsWithNEquals: true,
+  supSubsRequireOperand: true,
+  charsThatBreakOutOfSupSub: '',
+  autoSubscriptNumerals: true,
+  autoCommands: 'pi theta sqrt rho',
+  autoOperatorNames: 'sin cos tan log abs floor ceil mod exp sign',
+  maxDepth: 10,
 };
 
 export class MathObjects extends React.Component {
