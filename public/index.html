@@ -21,8 +21,12 @@
 
       //vec4 getSample(vec4 xyzw);
 
+      uniform float time;
+      uniform float intensity;
+
       void getVertex(inout vec4 xyzw, inout vec4 stpq) {
         // Store XYZ per vertex in STPQ
+        // xyzw = vec4(xyzw.xy,cos(xyzw.x+sin(xyzw.y-10.0*time)),xyzw.w);
         stpq = xyzw;
       }
     </script>

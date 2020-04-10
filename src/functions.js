@@ -1,31 +1,13 @@
-// export function cos(x)
-// {
-// 	return Math.cos(x);
-// };
-// export function sin(x)
-// {
-// 	return Math.sin(x);
-// };
-// var sqrt = function(x)
-// {
-// 	return Math.sqrt(x);
-// };
-// var pow = function(x,y)
-// {
-// 	return Math.pow(x,y);
-// };
-// var exp = function(x)
-// {
-// 	return Math.exp(x);
-// };
-// var tan = function(x)
-// {
-// 	return Math.tan(x);
-// };
-// var abs = function(x)
-// {
-// 	return Math.abs(x);
-// };
+export const sin = (x) => Math.sin(x);
+export const cos = (x) => Math.cos(x);
+export const tan = (x) => Math.tan(x);
+export const sqrt = (x) => Math.sqrt(x);
+export const abs = (x) => Math.abs(x);
+export const exp = (x) => Math.exp(x);
+export const floor = (x) => Math.floor(x);
+export const ceil = (x) => Math.ceil(x);
+export const sign = (x) => Math.sign(x);
+
 // var trapzWeights = function(N)
 // {
 // 	// Create a zeros NxN array and fill it accordinly
@@ -99,17 +81,17 @@
 // 	return math.add(psi,math.multiply(math.add(k1,k2,k3,k4),dto6));
 // };
 
-// // https://stackoverflow.com/questions/3115982/how-to-check-if-two-arrays-are-equal-with-javascript
-export const arraysEqual = (a, b) => {
-	if (a === b) return true;
-	if (a == null || b == null) return false;
-	if (a.length !== b.length) return false;
+// // // https://stackoverflow.com/questions/3115982/how-to-check-if-two-arrays-are-equal-with-javascript
+// export const arraysEqual = (a, b) => {
+// 	if (a === b) return true;
+// 	if (a == null || b == null) return false;
+// 	if (a.length !== b.length) return false;
 
-	// If you don't care about the order of the elements inside
-	// the array, you should sort both arrays here.
+// 	// If you don't care about the order of the elements inside
+// 	// the array, you should sort both arrays here.
 
-	for (var i = 0; i < a.length; ++i) {
-		if (a[i] !== b[i]) return false;
-	}
-	return true;
-}
+// 	for (var i = 0; i < a.length; ++i) {
+// 		if (a[i] !== b[i]) return false;
+// 	}
+// 	return true;
+// }

@@ -12,16 +12,17 @@ export default class mathObject {
   createDomain(view) {
     var L = 10;
     const pi = 3.14159;
-    return view.cartesian({
-      id: this.id + "domain",
-      range: [
-        [-L, L],
-        [-L, L],
-        [-L, L]
-      ],
-      scale: [1, 1, 1],
-      rotation: [-pi/2, 0, -pi/2]
-    });
+    return view
+      // .cartesian({
+      //   id: this.id + "domain",
+      //   range: [
+      //     [-L, L],
+      //     [-L, L],
+      //     [-L, L],
+      //   ],
+      //   scale: [1, 1, 1],
+      //   //rotation: [-pi/2, 0, -pi/2]
+      // });
   }
 
   createLineData() {
@@ -34,7 +35,7 @@ export default class mathObject {
         emit(x, f(x));
       },
       items: 1,
-      channels: 2
+      channels: 2,
     });
   }
 
@@ -42,44 +43,58 @@ export default class mathObject {
     this.primitive = this.data.line({
       id: this.id + "primitive",
       width: 1.5,
-      color: this.color
+      color: this.color,
     });
   }
 
   createSurfData() {
     const f = this.func;
+    console.log(this.func)
     this.data = this.domain.area({
       id: this.id + "data",
       width: 128,
       height: 128,
-      live: false,
-      expr: function (emit, x, y, i, j, t, d) {
-        emit(x, y, f(x, y));
+      live: true,
+      expr: function (emit, x, y, i, j, time, delta) {
+        emit(x, y, f(x,y,time));
       },
       items: 1,
-      channels: 3
+      channels: 3,
     });
   }
 
   createSurfPrimitive() {
     this.primitive = this.data
-      .shader({
-        code: "#vertex-xyz"
-      })
+      .shader(
+        {
+          code: "#vertex-xyz",
+        },
+        // {
+        //   time: function (t) {
+        //     return t / 4;
+        //   },
+        //   intensity: function (t) {
+        //     t = t / 4;
+        //     let intensity = 0.5 + 0.5 * Math.cos(t / 3);
+        //     intensity = 1.0 - Math.pow(intensity, 4);
+        //     return intensity;
+        //   },
+        // }
+      )
       .vertex({
-        pass: "data"
+        pass: "data",
       })
       .shader({
         code: "#fragment-xyz",
-        scale: 0.25
+        scale: 0.25,
       })
       .fragment({
-        gamma: true
+        gamma: true,
       })
       .surface({
         id: this.id + "primitive",
         color: this.color,
-        shaded: true
+        shaded: true,
       });
   }
 

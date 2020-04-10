@@ -12,7 +12,7 @@ const config = {
   charsThatBreakOutOfSupSub: '',
   autoSubscriptNumerals: true,
   autoCommands: 'pi theta sqrt rho',
-  autoOperatorNames: 'sin cos tan log abs floor ceil mod exp sign',
+  autoOperatorNames: 'sin cos tan log abs floor ceil exp sign max min',
   maxDepth: 10,
 };
 
