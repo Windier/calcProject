@@ -1,30 +1,7 @@
-// Mathjs Parser
-import { parse } from "mathjs";
+import { symbolPool, userFunctions } from "./userDefinitions";
 
 // Unique set of variables in an array
-const unique = (arr) => [...new Set(arr)];
-
-let symbolPool = {
-  sin: "BuiltInFunction",
-  cos: "BuiltInFunction",
-  tan: "BuiltInFunction",
-  sqrt: "BuiltInFunction",
-  abs: "BuiltInFunction",
-  floor: "BuiltInFunction",
-  ceil: "BuiltInFunction",
-  sign: "BuiltInFunction",
-  exp: "BuiltInFunction",
-  pow: "BuiltInFunction",
-  max: "BuiltInFunction",
-  min: "BuiltInFunction",
-  x: "BuiltInVariable",
-  y: "BuiltInVariable",
-  t: "BuiltInTimeVariable",
-};
-
-let userFunctions = {
-  //f: { args: ['x','y'], expr: "Math.sin(x+y)" },
-};
+export const unique = (arr) => [...new Set(arr)];
 
 const parseUserFunctionNode = (node) => {
   const userFunc = userFunctions[node.fn];
@@ -34,7 +11,7 @@ const parseUserFunctionNode = (node) => {
   let output = ["("]; // Wrap it in parenthesis
   for (let i = 0; i < userFuncArgs.length; i++) {
     // Regex to find the ith argument in func expression
-    const regex = new RegExp(userFuncArgs[i], "g");
+    const regex = new RegExp("(?<=\\W)" + userFuncArgs[i] + "(?=\\W)", "g");
     const arg = parseExpr(node.args[i]);
     // Replace the user expression argument with typed function argument
     userFuncExpr = userFuncExpr.replace(regex, arg);
@@ -47,7 +24,7 @@ const parseUserFunctionNode = (node) => {
 const parseFunctionNode = (node) => {
   const numArgs = node.args.length;
   let output =
-    typeof symbolPool[node.fn] === "undefined"
+    typeof symbolPool[node.fn].type === "undefined"
       ? [String(node.fn), "("]
       : ["Math." + String(node.fn), "("];
   for (let i = 0; i < numArgs; i++) {
@@ -83,7 +60,7 @@ const parseOperatorNode = (node) => {
         return String(
           parseExpr(node.args[0]) + node.op + parseExpr(node.args[1])
         );
-      }
+      };
     default:
       return String(
         parseExpr(node.args[0]) + node.op + parseExpr(node.args[1])
@@ -91,16 +68,15 @@ const parseOperatorNode = (node) => {
   }
 };
 
-const parseExpr = (node) => {
+export const parseExpr = (node) => {
   switch (node.type) {
     case "FunctionNode":
-      switch (symbolPool[node.fn]) {
+      switch (symbolPool[node.fn].type) {
         case "BuiltInFunction":
           return parseFunctionNode(node);
-        case 'UserDefinedFunction':
+        case "UserDefinedFunction":
           return parseUserFunctionNode(node);
       }
-
     case "OperatorNode":
       return parseOperatorNode(node);
     case "SymbolNode":
@@ -112,7 +88,7 @@ const parseExpr = (node) => {
   }
 };
 
-const substituteLaTeX = (expr) => {
+export const substituteLaTeX = (expr) => {
   let outExpression = expr;
   const regex = [
     { tex: /\\cdot/g, replacement: "*" },
@@ -136,35 +112,41 @@ const substituteLaTeX = (expr) => {
   return outExpression;
 };
 
-const findSymbols = (node) => {
-  return node.filter((node) => {
-    return node.isSymbolNode && symbolPool[node.name] === "BuiltInVariable";
-  });
-};
-
-const validadeNodes = (nodeTree) => {
+export const validadeNodes = (nodeTree) => {
   let valid = true;
-  let unknownFunctions = [];
   nodeTree.traverse(function (node, path, parent) {
     if (node.isSymbolNode) {
       const symbolName = symbolPool[node.name];
-      if (typeof symbolName === "undefined") {
+      if (typeof symbolPool[node.name] === "undefined") {
         console.log("Unknown Symbol " + node.name);
         valid = false;
       } else {
-        switch (symbolName) {
+        switch (symbolName.type) {
           case "UserDefinedFunction":
           case "BuiltInFunction":
             let numArgs = 0; // Assumes function with no arguments (invalid)
             try {
-              // Tests if function node (symbol parent) have any argument
+              // Tests if function node (symbol parent) has any argument
               if (parent.isFunctionNode) {
                 numArgs = Object.keys(parent.args).length;
+                if (numArgs != symbolPool[node.name].numArgs) {
+                  valid = false;
+                  console.log(
+                    node.name +
+                      " requires " +
+                      symbolPool[node.name].numArgs +
+                      " arguments"
+                  );
+                }
               }
-            } catch (e) {}
-            if (numArgs == 0) {
-              console.log(node.name + " requires arguments");
+            } catch (e) {
               valid = false;
+              console.log(
+                node.name +
+                  " requires " +
+                  symbolPool[node.name].numArgs +
+                  " arguments"
+              );
             }
             break;
           case "BuiltInVariable":
@@ -176,50 +158,15 @@ const validadeNodes = (nodeTree) => {
   return valid;
 };
 
-const defineUserFunction = (name, expr, args) => {
+export const defineUserFunction = (name, expr, args) => {
   userFunctions[name] = { expr: expr, args: args };
-  symbolPool[name] = "UserDefinedFunction";
-  console.log(userFunctions);
+  symbolPool[name] = { type: "UserDefinedFunction", numArgs: args.length };
 };
 
-export const latexParser = (latex) => {
-  let validNodeTree = true;
-  let func = null;
-  let node = null;
-
-  console.time("Timer");
-  const expr = substituteLaTeX(latex);
-  try {
-    node = parse(expr);
-    validNodeTree = validadeNodes(node);
-  } catch (error) {
-    validNodeTree = false;
-  }
-  console.timeEnd("Timer");
-
-  let exprCompiled;
-  let symbols;
-  let variables;
-
-  if (validNodeTree) {
-    switch (node.type) {
-      case "FunctionAssignmentNode":
-        const funcExpr = parseExpr(node.expr);
-        func = new Function("x", "y", "t", "return " + funcExpr);
-        variables = node.params;
-        defineUserFunction(node.name, funcExpr, node.params);
-        break;
-      default:
-        func = new Function("x", "y", "t", "return " + parseExpr(node));
-        symbols = findSymbols(node);
-        variables = unique(symbols.map((node) => node.name)).sort();
-        break;
-    }
-    // console.log(func);
-    // func = (x, y, t) => exprCompiled.evaluate({ x: x, y: y, t: t });
-    return [validNodeTree, func, variables];
-    return [false, null, []];
-  } else {
-    return [validNodeTree, null, []];
-  }
+export const findSymbols = (node) => {
+  return node.filter((node) => {
+    return (
+      node.isSymbolNode && symbolPool[node.name].type === "BuiltInVariable"
+    );
+  });
 };

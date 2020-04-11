@@ -6,8 +6,6 @@ class mathBoxEnv {
     this.mathbox = this.initializeMathBox();
     this.domain = this.initializeDomain();
     this.view = this.initializeView();
-    this.userVariables = [];
-    // {'name':'g','variables':['x'],'expression':'sin(x)'}
   }
 
   initializeMathBox() {
@@ -62,9 +60,10 @@ class mathBoxEnv {
     let contour_scale = 0.12;
 
     let view = this.domain;
-    view.axis({});
+    view.axis({color: colors.x});
     view.axis({
-      axis: 2, // "y" also works
+      axis: 2, 
+      color: colors.y// "y" also works
     });
     view
       .scale({
@@ -75,8 +74,8 @@ class mathBoxEnv {
         niceY: false,
         width: 0.5,
         opacity: 0.45,
-        divideX: 50,
-        divideY: 50,
+        divideX: 14,
+        divideY: 14,
       });
     return view;
   }

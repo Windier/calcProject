@@ -4,8 +4,7 @@ import mathObject from "./mathboxObject";
 
 import AddEquation from "./components/AddEquation";
 import { MathObjects } from "./components/MathObjects";
-// import { latexParser } from "./parser";
-import { latexParser } from "./parser2"
+import { latexParser } from "./utils/parser";
 
 // Material UI Components
 import { makeStyles } from "@material-ui/core/styles";
@@ -19,13 +18,18 @@ export class App extends React.Component {
     super();
     this.mathbox = window.mathbox;
     this.state = {
-      mathObjects: []
+      mathObjects: [
+        // expression: "f\left(x\right) = \\sin(x+y)", id: 53PI5, active: true
+      ],
+      userDefinitions: {
+        //f: { args: ['x','y'], expr: 'Math.sin(x+y)', id: 53PI5 },
+      },
     };
   }
 
-  updateMathObjectState = (latex, id, index, expr) => {
+  updateMathObjectState = (latex, id, index) => {
     const stateCopy = this.state.mathObjects.slice();
-    stateCopy.expression = latex;
+    stateCopy[index].expression = latex;
     this.setState({ mathObjects: stateCopy });
     this.parseExpression(latex, id, index);
   };
@@ -34,7 +38,8 @@ export class App extends React.Component {
     const stateCopy = this.state.mathObjects.slice();
     stateCopy.push({
       expression: "",
-      id: this.genUniqueID()
+      id: this.genUniqueID(),
+      active: false,
     });
     this.setState({ mathObjects: stateCopy });
   };
@@ -54,7 +59,7 @@ export class App extends React.Component {
   };
 
   parseExpression = (expr, id, index) => {
-    const [validFunction, func, variables] = latexParser(expr);
+    const [validFunction, func, args] = latexParser(expr);
 
     const isGraphAttached = this.state.mathObjects[index].active;
 
@@ -62,6 +67,7 @@ export class App extends React.Component {
       this.mathbox.view.select("#" + id + "domain").remove();
       this.mathbox.view.select("#" + id + "data").remove();
       this.mathbox.view.select("#" + id + "primitive").remove();
+
       const stateCopy = this.state.mathObjects.slice();
       stateCopy[index].active = false;
       this.setState({ mathObjects: stateCopy });
@@ -69,7 +75,13 @@ export class App extends React.Component {
 
     if (validFunction) {
       let object = new mathObject(func, window.mathbox.view, id);
-      switch (variables.length) {
+      // How many independent args othen than time (t)
+      const argsCopy = [...args];
+      const timeIndex = argsCopy.indexOf("t");
+      if (argsCopy.indexOf("t") > -1) {
+        argsCopy.splice(timeIndex, 1);
+      }
+      switch (argsCopy.length) {
         case 1:
           object.createLineData();
           object.createLinePrimitive();

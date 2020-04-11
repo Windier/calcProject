@@ -29,10 +29,10 @@ export default class mathObject {
     const f = this.func;
     this.data = this.view.interval({
       id: this.id + "data",
-      width: 256,
-      live: false,
+      width: 1024,
+      live: true,
       expr: function (emit, x, i, t, d) {
-        emit(x, f(x));
+        emit(x, f(x,t));
       },
       items: 1,
       channels: 2,

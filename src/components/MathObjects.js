@@ -32,29 +32,9 @@ export class MathObjects extends React.Component {
           // LaTeX Expression has changed, so get the updated latex expression
           const latex = mathField.latex();
           // Update parent state with current latex expression
-          this.props.updateHandler(latex, this.props.id, this.props.index,mathField.text());
+          this.props.updateHandler(latex, this.props.id, this.props.index);
         }}
       />
     );
   }
 }
-
-/* <List>
-{this.props.equations.map((name,i) => <ListItemText key={i}><span>{name}</span></ListItemText>)}
-</List> */
-
-/* <ListItem>
-	<MathQuill
-		latex = {this.state.latex} // Initial latex value for the input field
-		onChange = {mathField => {
-			const latex = mathField.latex()
-			console.log(latex)
-			this.setState({ latex })
-		}}
-	/>
-</ListItem> */
-
-// items: {
-// 	...prevState.items,
-// 	[prevState.items[1].name]: e.target.value,
-// },
