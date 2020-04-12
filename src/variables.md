@@ -1,4 +1,4 @@
-**Surfaces and Curves**
+Surfaces and Curves
 Explicit
 * Curves
 	* Cartesian ($x,y,z$)
